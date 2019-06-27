@@ -4,6 +4,13 @@
 
 ## Запуск
 
-Сначала установить зависимости с помощью команды `yarn` или `npm install`.
+```bash
+yarn
+yarn start
+```
+или
 
-Затем запускаем сервер с помощью `yarn start` или `npm start`.
+```bash
+npm install
+npm start
+```
