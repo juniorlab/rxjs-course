@@ -1,8 +1,11 @@
-import {fromEvent, from} from 'rxjs';
+import {fromEvent, from, of} from 'rxjs';
 import {debounceTime, map, distinctUntilChanged, switchMap} from 'rxjs/operators'
 
 
 function getCountries(query) {
+  if (query === '') {
+    return of({json: () => []});
+  }
   return from(fetch(`/api/countries?query=${query}`))
 }
 
@@ -11,7 +14,7 @@ window.addEventListener('load', () => {
 
   fromEvent(document.getElementById('typeAhead'), 'keyup')
     .pipe(
-      debounceTime(1000),
+      debounceTime(200),
       map((e) => e.target.value),
       distinctUntilChanged(),
       switchMap((query) => getCountries(query)),
