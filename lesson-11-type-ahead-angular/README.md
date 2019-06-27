@@ -1,4 +1,4 @@
-# Type Ahead на RxJS
+# Type Ahead на RxJS и Angular
 
 Предсказывает варианты по мере ввода запроса в текстовый html input.
 
