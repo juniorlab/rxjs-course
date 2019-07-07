@@ -1,0 +1,18 @@
+.dot {
+    margin-top: 10px;
+    height: 30px;
+    width: 30px;
+    background-color: lightgray;
+    border-radius: 50%;
+    transition: all 0.6s ease-in-out;
+    text-align: center;
+    color: white;
+}
+
+.timer {
+    position: absolute;
+    top: 150px;
+    left: 150px;
+    opacity: 0.1;
+    font-size: 60px;
+}
