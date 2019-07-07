@@ -36,10 +36,18 @@ window.addEventListener('load', () => {
     return Math.random() * 300;
   }
 
+  // https://stackoverflow.com/a/7638362/8544967
+  function makeRandomColor(){
+    let c = '';
+    while (c.length < 7) {
+      c += (Math.random()).toString(16).substr(-6).substr(-1)
+    }
+    return '#'+c;
+  }
+
   function updateDot(score) {
     if (score % 3) {
-      dot.style.backgroundColor =
-        '#' + ((Math.random() * 0xffffff) << 0).toString(16);
+      dot.style.backgroundColor = makeRandomColor();
     }
   }
 
@@ -53,7 +61,7 @@ window.addEventListener('load', () => {
     .pipe(
       tap(moveDot),
       scan(updateState, initialState),
-      tap((state) => )
+      tap((state) => {})
     )
 });
 
