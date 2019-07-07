@@ -1,11 +1,22 @@
 import {fromEvent} from 'rxjs';
-import {scan, timeInterval, takeWhile, repeat} from 'rxjs/operators';
+import {tap, scan, timeInterval} from 'rxjs/operators';
 
 window.addEventListener('load', () => {
   const mainElement = document.getElementById('main');
   const outputElement = document.getElementById('output');
+  const recordElement = document.getElementById('record');
+  const fastestClickElement = document.getElementById('fastestClick');
 
-  function update(score) {
+  function updateInterface(score, record, interval) {
+
+    if (record) {
+      recordElement.innerText = record;
+    }
+
+    if (interval) {
+      fastestClickElement.innerText = interval;
+    }
+
     outputElement.innerText = score;
     outputElement.style.fontSize = `${score}px`;
     score = score <= 100 ? (score / 100).toFixed(2) : 1;
@@ -13,27 +24,54 @@ window.addEventListener('load', () => {
   }
 
   function reset() {
-    update(0);
+    updateInterface(0);
   }
+
+  const initialLocalState = {
+    interval: 0,
+    score: 0,
+    threshold: 300,
+  };
 
   fromEvent(document, 'click')
     .pipe(
       timeInterval(),
-      scan((state, timeInterval) => ({
-          interval: timeInterval.interval,
-          score: state.score + 1,
+      scan((state, timeInterval) => {
+        const interval = timeInterval.interval;
+
+        if (interval > state.threshold) {
+          return {
+            ...state,
+            ...initialLocalState,
+          }
+        }
+
+        const score = state.score + 1;
+
+        return {
+          interval,
+          score,
+          fastestClick: state.fastestClick < interval
+            ? state.fastestClick
+            : interval,
+          record: state.record > score
+            ? state.record
+            : score,
           threshold: state.threshold - 2,
-        }), {
-        interval: 0,
-        score: 0,
-        threshold: 300,
+        };
+      }, {
+        record: 0,
+        fastestClick: Infinity,
+        ...initialLocalState
       }),
-      takeWhile((state) => state.interval < state.threshold),
-      repeat(),
+      tap((state) => {
+        if (state.score === 0) {
+          reset()
+        }
+      })
     )
     .subscribe(
-      (state) => update(state.score),
-      () => {},
-      () => reset()
+      (state) => updateInterface(state.score, state.record, state.fastestClick),
     );
 });
+
