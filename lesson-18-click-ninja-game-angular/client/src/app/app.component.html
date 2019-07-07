@@ -1,0 +1,13 @@
+<main id="main"
+      [ngStyle]="{'background-color': getMainColor((clicks$ | async)?.score)}">
+  <div>Record: <span class="text"
+                     id="record">{{(clicks$ | async)?.record}}</span></div>
+  <div>Fastest click: <span class="text"
+                            id="fastestClick">{{(clicks$ | async)?.fastestClick}}</span> ms
+  </div>
+  <div class="text score"
+       id="output"
+       [ngStyle]="{'font-size.px': (clicks$ | async)?.score}"
+  >{{(clicks$ | async)?.score}}
+  </div>
+</main>
