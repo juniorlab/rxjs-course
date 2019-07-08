@@ -1,0 +1,4 @@
+<main>
+  <div class="timer">{{(events$ | async)?.remaining}}</div>
+  <div #dot class="dot" [ngStyle]="dotStyle">{{(events$ | async)?.score}}</div>
+</main>

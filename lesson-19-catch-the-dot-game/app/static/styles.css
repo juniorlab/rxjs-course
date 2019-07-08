@@ -1,18 +1,20 @@
 .dot {
-    margin-top: 10px;
-    height: 30px;
-    width: 30px;
+    align-items: center;
     background-color: lightgray;
     border-radius: 50%;
-    transition: all 0.6s ease-in-out;
-    text-align: center;
     color: white;
+    display: flex;
+    height: 30px;
+    justify-content: center;
+    margin-top: 10px;
+    transition: all 0.6s ease-in-out;
+    width: 30px;
 }
 
 .timer {
-    position: absolute;
-    top: 150px;
+    font-size: 60px;
     left: 150px;
     opacity: 0.1;
-    font-size: 60px;
+    position: absolute;
+    top: 150px;
 }
