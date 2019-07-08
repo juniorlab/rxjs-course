@@ -1,0 +1,20 @@
+.dot {
+  align-items: center;
+  background-color: lightgray;
+  border-radius: 50%;
+  color: white;
+  display: flex;
+  height: 30px;
+  justify-content: center;
+  margin-top: 10px;
+  transition: all 0.6s ease-in-out;
+  width: 30px;
+}
+
+.timer {
+  font-size: 60px;
+  left: 150px;
+  opacity: 0.1;
+  position: absolute;
+  top: 150px;
+}
