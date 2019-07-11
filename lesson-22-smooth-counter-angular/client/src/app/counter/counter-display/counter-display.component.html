@@ -1,5 +1,5 @@
 <div>
   <input #input>
-  <button (click)="update.emit(input.value)">Update</button>
-  <h3>{{displayValue}}</h3>
+  <button (click)="emit(input.value, display.innerText)">Update</button>
+  <h3 #display>{{displayValue}}</h3>
 </div>
