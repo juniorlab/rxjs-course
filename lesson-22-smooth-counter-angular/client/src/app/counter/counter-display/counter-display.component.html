@@ -1,0 +1,5 @@
+<div>
+  <input #input>
+  <button (click)="emit(input.value, display.innerText)">Update</button>
+  <h3 #display>{{displayValue}}</h3>
+</div>
