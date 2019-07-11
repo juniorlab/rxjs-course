@@ -4,7 +4,7 @@ import {map, scan, switchMap, takeWhile, tap} from 'rxjs/operators';
 
 interface State {
   interval: number;
-  remaining: number | string;
+  remaining: number;
   score: number;
 }
 
@@ -67,11 +67,7 @@ export class AppComponent implements AfterViewInit {
 
   private makeInterval(state: State) {
     return interval(state.interval).pipe(
-      map((i) => {
-        return 5 - i >= 0
-        ? {...state, remaining: 5 - i}
-        : {...state, remaining: 'Game Over'}
-      }),
+      map((i) => ({...state, remaining: 5 - i})),
     );
   }
 
