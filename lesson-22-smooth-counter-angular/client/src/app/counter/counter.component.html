@@ -1,0 +1,6 @@
+<app-counter-display
+  (update)="clicks$.next($event)"
+  [displayValue]="(clicks$ | async)">
+</app-counter-display>
+
+<pre>states: {{states$ | async}}</pre>
