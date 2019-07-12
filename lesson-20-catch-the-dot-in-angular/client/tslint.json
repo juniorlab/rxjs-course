@@ -4,7 +4,7 @@
     "array-type": false,
     "arrow-parens": false,
     "deprecation": {
-      "severity": "warn"
+      "severity": "warning"
     },
     "component-class-suffix": true,
     "contextual-lifecycle": true,
@@ -43,6 +43,7 @@
         ]
       }
     ],
+    "no-bitwise": false,
     "no-consecutive-blank-lines": false,
     "no-console": [
       true,
