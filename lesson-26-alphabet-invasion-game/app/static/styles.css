@@ -1,0 +1,13 @@
+.letters-field {
+    border: 1px solid orangered;
+    font-size: 20px;
+    height: 400px;
+    position: relative;
+    width: 300px;
+}
+
+.letters-field__row {
+    position: absolute;
+    transition-duration: 1000ms;
+    transition-timing-function: linear;
+}
