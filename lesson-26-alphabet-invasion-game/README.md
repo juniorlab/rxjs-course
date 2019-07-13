@@ -1,6 +1,6 @@
-# Catch the Dot Game
+# Alphabet Invasion Game
 
-Попробуй поймать точку
+Успевай нажимать верные клавиши
 
 ## Запуск
 

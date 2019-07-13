@@ -1,4 +1,6 @@
-# Client
+# Smooth Counter
+
+Плавно меняет числовые значения
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 8.0.3.
 
