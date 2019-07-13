@@ -1,15 +1,44 @@
-import {BehaviorSubject, fromEvent, interval, combineLatest} from 'rxjs';
-import {map, tap, scan, switchMap, takeWhile, finalize, startWith, mergeMap} from 'rxjs/operators';
+import {BehaviorSubject, fromEvent, interval, combineLatest, timer, Subject} from 'rxjs';
+import {
+  map,
+  tap,
+  scan,
+  switchMap,
+  takeWhile,
+  finalize,
+  startWith,
+  mergeMap,
+  multicast,
+  refCount,
+  withLatestFrom,
+  timestamp,
+} from 'rxjs/operators';
+
+const LEVEL_CHANGE_THRESHOLD = 20;
+const GAME_WIDTH = 30;
+const END_THRESHOLD = 15;
+const SPEED_ADJUST = 50;
 
 window.addEventListener('load', () => {
   const scoreElement = document.getElementById('score');
   const levelElement = document.getElementById('level');
   const lettersFieldElement = document.getElementById('lettersField');
 
-  const LEVEL_CHANGE_THRESHOLD = 20;
-  const GAME_WIDTH = 30;
-  const END_THRESHOLD = 15;
-  const SPEED_ADJUST = 50;
+  // /**
+  //  * @see https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API
+  //  */
+  // const intersectionObserver = new IntersectionObserver((entries) => {
+  //   entries.forEach(entry => {
+  //     if (entry.intersectionRatio < 0.999) {
+  //       gameOver$.next(true);
+  //     }
+  //   });
+  // }, {
+  //   root: lettersFieldElement,
+  //   rootMargin: '0px',
+  //   threshold: [1],
+  // });
+
 
   function randomLetter() {
     return String.fromCharCode(
@@ -18,7 +47,7 @@ window.addEventListener('load', () => {
   }
 
   function getXCoordinate(width) {
-    return Math.floor(Math.random() * width)
+    return Math.floor(Math.random() * width);
   }
 
   function createLetterRow(letter) {
@@ -33,122 +62,93 @@ window.addEventListener('load', () => {
   }
 
   function updateLetterPosition(letter, yCoordinate) {
-    letter.style.transform = `translateY(${yCoordinate}px)`
+    letter.style.transform = `translateY(${yCoordinate}px)`;
   }
 
   const interval$ = new BehaviorSubject(1000);
-  const lastLetter$ = new BehaviorSubject('');
-  const randomLetters$ = interval$
+  // const lastRandomLetter$ = new BehaviorSubject('');
+
+  const keys$ = fromEvent(document, 'keydown')
+    .pipe(
+      startWith({key: ''}),
+      map((event) => ({
+        timestamp: new Date().valueOf(),
+        value: event.key,
+      })),
+    );
+
+  const _randomLettersSource$ = interval$
     .pipe(
       switchMap((i) => interval(i)
         .pipe(
           map((_) => ({
+            timestamp: new Date().valueOf(),
             xCoordinate: getXCoordinate(GAME_WIDTH),
             value: randomLetter(),
           })),
-          tap(leter => console.log(leter)),
-          tap((letter) => lastLetter$.next(letter.value)),
-          map((letter) => createLetterRow(letter)),
-          tap((letterElement) => addLetter(letterElement)),
-          tap(le => console.log('el', le)),
-          mergeMap((letterElement) => interval(1000)
-            .pipe(
-              tap((i) => updateLetterPosition(letterElement, i * 30))
-            ))
         )),
-    ).subscribe()
+    );
 
-  //
-  // function renderGame(state) {
-  //   console.log('rendering')
-  //   scoreElement.innerText = state.score;
-  //   levelElement.innerText = state.level;
-  //   let lettersField = '';
-  //
-  //   state.letters.forEach((letter) => {
-  //     lettersField +=
-  //       '&nbsp'.repeat(letter.xCoordinate) + letter.value + '<br/>';
-  //   });
-  //
-  //   lettersField +=
-  //     '<br/>'.repeat(END_THRESHOLD - state.letters.length - 1) +
-  //     '-'.repeat(GAME_WIDTH);
-  //   lettersFieldElement.innerHTML = lettersField;
-  // }
-  //
-  // function renderGameOver() {
-  //   document.body.innerHTML += '<br/>GAME OVER';
-  // }
-  //
-  // const noop = () => {
-  // };
-  //
-  // const intervalSubject = new BehaviorSubject(600);
-  //
-  // const initialLettersState = {
-  //   letters: [],
-  //   interval: 0,
-  // };
-  //
-  // function updateLetters(letters, i) {
-  //   return {
-  //     interval: i,
-  //     letters: [        {
-  //       value: randomLetter(),
-  //       xCoordinate: Math.floor(Math.random() * GAME_WIDTH),
-  //     },
-  //       ...letters.letters,
-  //     ],
-  //   };
-  // }
-  //
-  // const letters$ = intervalSubject
-  //   .pipe(
-  //     switchMap((i) => interval(i)
-  //       .pipe(
-  //         scan(updateLetters, initialLettersState),
-  //       ),
-  //     ),
-  //   );
-  //
-  // const keys$ = fromEvent(document, 'keydown')
-  //   .pipe(
-  //     startWith({key: ''}),
-  //     map((e) => e.key),
-  //   );
-  //
-  // const initialState = {score: 0, letters: [], level: 1};
-  //
-  // function updateState(state, [key, letters]) {
-  //   const lastLetter = letters.letters.slice(-1)[0];
-  //   const isNewLevel = state.score > 0 && state.score % LEVEL_CHANGE_THRESHOLD === 0;
-  //   console.log('isnew level', isNewLevel)
-  //   console.log('letters', letters)
-  //   if (lastLetter && lastLetter.value === key) {
-  //     return {
-  //       score: state.score + 1,
-  //       letters: isNewLevel ? [] : letters.letters.slice(0, -1),
-  //       level: isNewLevel ? state.level + 1 : state.level,
-  //     };
-  //   }
-  //
-  //   return {
-  //     ...state,
-  //     letters: letters.letters.slice(),
-  //   };
-  // }
-  //
-  // combineLatest(keys$, letters$)
-  //   .pipe(
-  //     scan(updateState, initialState),
-  //     tap(value => console.log(value)),
-  //     takeWhile(state => state.letters.length < END_THRESHOLD),
-  //   )
-  //   .subscribe(
-  //     renderGame,
-  //     () => {
-  //     },
-  //     // renderGameOver,
-  //   );
+  const randomLettersSource$ = new Subject();
+
+  const randomLetters$ = _randomLettersSource$.pipe(multicast(randomLettersSource$), refCount());
+
+  const transform$ = randomLetters$.pipe(
+    map((letter) => createLetterRow(letter)),
+    tap((letterElement) => {
+      addLetter(letterElement);
+    }),
+    mergeMap((letterElement) => timer(0, 1000)
+      .pipe(
+        tap((i) => updateLetterPosition(letterElement, i * 30)),
+      )),
+  ).subscribe();
+
+  function removeLetter() {
+    console.log(lettersFieldElement.lastChild);
+    lettersFieldElement.removeChild(lettersFieldElement.lastChild);
+  }
+
+  combineLatest(randomLetters$.pipe(
+    startWith({
+      timestamp: 0,
+      xCoordinate: 1,
+      value: '',
+    })
+  ), keys$.pipe(
+    startWith({
+      timestamp: 1,
+      value: '',
+    })
+  ))
+    .pipe(
+      scan((state, [letter, key]) => {
+        const updatedState = {...state};
+        console.log('updatedState.letters[0]', updatedState.letters[0], ' <=');
+        console.log('key.value', key.value, ' <=');
+        if (letter.timestamp > key.timestamp) {
+          return {
+            ...state,
+            letters: state.letters.concat([letter.value]),
+          }
+        }
+
+        if (updatedState.letters[0] === key.value) {
+          removeLetter();
+          updatedState.letters = updatedState.letters.slice(1);
+          updatedState.score = updatedState.score + 1;
+          return updatedState;
+        }
+        return updatedState;
+      }, {
+        letters: [''],
+        score: -1,
+        level: 1,
+      }),
+      tap(state => console.log(state)),
+      takeWhile((state) => state.letters.length !== END_THRESHOLD),
+      finalize(() => transform$.unsubscribe())
+    )
+    .subscribe()
 });
 

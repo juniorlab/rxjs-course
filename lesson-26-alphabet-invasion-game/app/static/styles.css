@@ -1,9 +1,16 @@
-.letters-field {
+.letters-field-wrapper {
     border: 1px solid orangered;
     font-size: 20px;
     height: 400px;
-    position: relative;
+    padding: 10px;
     width: 300px;
+}
+
+
+.letters-field {
+    height: 100%;
+    position: relative;
+    width: 100%;
 }
 
 .letters-field__row {
