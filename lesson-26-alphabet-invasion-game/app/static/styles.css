@@ -10,14 +10,14 @@ body {
 }
 
 main {
-    align-items: center;
-    color: white;
-    display: flex;
-    flex-direction: column;
-    font-family: Constantia, sans-serif;
-    padding-top: 50px;
-    width: 100%;
-}
+     align-items: center;
+     color: white;
+     display: flex;
+     flex-direction: column;
+     font-family: Constantia, sans-serif;
+     padding-top: 50px;
+     width: 100%;
+ }
 
 h1 {
     margin-bottom: 40px;
