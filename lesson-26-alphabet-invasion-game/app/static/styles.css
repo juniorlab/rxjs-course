@@ -25,15 +25,24 @@ h1 {
     font-size: 60px;
 }
 
+.letters-field-wrapper {
+    align-items: center;
+    display: flex;
+    height: 430px;
+    justify-content: center;
+    margin-top: 40px;
+    padding: 15px 15px 0 15px;
+    width: 180px;
+}
+
 .letters-field {
     border: 1px solid white;
     border-radius: 10px;
-    height: 400px;
     font-size: 20px;
-    margin-top: 40px;
+    height: 100%;
     padding: 0 15px;
     position: relative;
-    width: 150px;
+    width: 100%;
 }
 
 .letters-field__row {

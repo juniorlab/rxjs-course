@@ -105,7 +105,7 @@ window.addEventListener('load', () => {
       requestAnimationFrame(() => {
         updateLetterPosition(letter.element, 0);
         requestAnimationFrame(() => {
-          updateLetterPosition(letter.element, 385);
+          updateLetterPosition(letter.element, 400);
         });
       });
     }),
@@ -119,6 +119,10 @@ window.addEventListener('load', () => {
 
   function styleCurrentLetter() {
     Array.from(lettersFieldElement.children).slice(-1)[0].children[0].classList.add('current_letter')
+  }
+
+  function unstyleCurrentLetter() {
+    Array.from(lettersFieldElement.children).slice(-1)[0].children[0].classList.remove('current_letter')
   }
 
   const initialState = {
@@ -179,7 +183,10 @@ window.addEventListener('load', () => {
     .pipe(
       scan(updateState, initialState),
       takeWhile((state) => !state.gameOver),
-      finalize(() => transform$.unsubscribe()),
+      finalize(() => {
+        transform$.unsubscribe();
+        unstyleCurrentLetter();
+      }),
     )
     .subscribe();
 });
