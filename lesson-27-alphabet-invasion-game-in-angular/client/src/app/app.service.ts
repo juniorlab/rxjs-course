@@ -1,6 +1,6 @@
 import {EventEmitter, Injectable, Output} from '@angular/core';
-import {BehaviorSubject, combineLatest, fromEvent, interval, Observable, Subject} from 'rxjs';
-import {map, multicast, refCount, scan, startWith, switchMap, tap} from 'rxjs/operators';
+import {BehaviorSubject, combineLatest, fromEvent, interval, Observable} from 'rxjs';
+import {map, startWith, switchMap} from 'rxjs/operators';
 import {Key, Letter, State} from './app.types';
 
 @Injectable({
@@ -18,14 +18,14 @@ export class AppService {
     SPEED_ADJUST: 50,
   };
 
-  initialLetter: Letter = {
+  private initialLetter: Letter = {
     interval: 800,
     timestamp: 0,
     xCoordinate: 1,
     value: '',
   };
 
-  initialKey: Key = {
+  private initialKey: Key = {
     timestamp: 1,
     value: '',
   };
@@ -33,14 +33,15 @@ export class AppService {
   initialState: State = {
     gameIsOver: false,
     letters: [this.initialLetter],
-    score: 0,
+    score: -1,
     level: 1,
   };
 
   intersectionObserver: IntersectionObserver;
 
   interval$ = new BehaviorSubject(this.config.INITIAL_INTERVAL);
-  keys$ = fromEvent(document, 'keydown')
+
+  private keys$ = fromEvent(document, 'keydown')
     .pipe(
       startWith({key: ''} as KeyboardEvent),
       map((event: Event) => ({
@@ -49,11 +50,11 @@ export class AppService {
       })),
     );
 
-  private _randomLettersSource$: Observable<Letter> = this.interval$
+  private randomLetters$: Observable<Letter> = this.interval$
     .pipe(
       switchMap((gameInterval) => interval(gameInterval)
         .pipe(
-          map((_) => ({
+          map(() => ({
             interval: gameInterval,
             timestamp: new Date().valueOf(),
             xCoordinate: this.getRandomXCoordinate(this.config.GAME_WIDTH),
@@ -62,24 +63,20 @@ export class AppService {
         )),
     );
 
-  randomLetters$: Observable<Letter>
-    = this._randomLettersSource$.pipe(multicast(new Subject()), refCount());
 
   gameOver$ = new BehaviorSubject(false);
 
-  _game$ = combineLatest(
+  game$ = combineLatest(
     this.randomLetters$.pipe(startWith(this.initialLetter)),
     this.keys$.pipe(startWith(this.initialKey)),
     this.gameOver$,
   );
 
-
   constructor() {
   }
 
   onThresholdCross(entries: IntersectionObserverEntry[]) {
-    entries.forEach(entry => {
-      console.debug('entry.intersectionRatio',entry.intersectionRatio)
+    entries.forEach((entry) => {
       if (entry.intersectionRatio < 1) {
         this.gameOver$.next(true);
         this.intersectionObserver.disconnect();

@@ -1,15 +1,6 @@
-import {animate, style, transition, trigger} from '@angular/animations';
-import {
-  AfterViewChecked,
-  AfterViewInit,
-  ChangeDetectorRef,
-  Component,
-  ElementRef,
-  OnInit,
-  ViewChild,
-} from '@angular/core';
-import {concat, Observable, of} from 'rxjs';
-import {finalize, scan, startWith, subscribeOn, takeWhile, tap} from 'rxjs/operators';
+import {AfterViewInit, Component, ViewChild} from '@angular/core';
+import {Observable, of} from 'rxjs';
+import {finalize, scan, takeWhile} from 'rxjs/operators';
 import {AppService} from './app.service';
 import {Key, Letter, State} from './app.types';
 import {GameComponent} from './game/game.component';
@@ -21,15 +12,12 @@ import {GameComponent} from './game/game.component';
 })
 export class AppComponent implements AfterViewInit {
 
-  // @ViewChild('lettersField', {static: false}) lettersField: ElementRef;
   @ViewChild(GameComponent, {static: false}) gameComponent: GameComponent;
 
-  letters: Letter[] = [];
   game$: Observable<State> = of(this.service.initialState);
 
   constructor(
     private service: AppService,
-    private cdref: ChangeDetectorRef,
   ) {
   }
 
@@ -37,7 +25,7 @@ export class AppComponent implements AfterViewInit {
     state: State,
     [letter, key, gameIsOver]: [Letter, Key, boolean]): State {
     if (letter.timestamp > key.timestamp) {
-      const letterElement = this.getLastChild(this.gameComponent.lettersField.nativeElement);
+      const letterElement = this.getLastChild(this.lettersField);
       if (letterElement) {
         this.service.intersectionObserver.observe(letterElement);
       }
@@ -52,8 +40,12 @@ export class AppComponent implements AfterViewInit {
     const updatedState = {...state, gameIsOver};
 
     if (updatedState.letters.length > 0 && updatedState.letters[0].value === key.value) {
-      this.service.intersectionObserver.unobserve(this.gameComponent.lettersField.nativeElement.children[0]);
-      const nextElement = this.gameComponent.lettersField.nativeElement.children[1];
+      // try restarting real fast without the next 4 lines
+      const currentElement = this.lettersField.children[0];
+      if (currentElement) {
+        this.service.intersectionObserver.unobserve(this.lettersField.children[0]);
+      }
+      const nextElement = this.lettersField.children[1];
       if (nextElement) {
         nextElement.classList.add('current-letter');
       }
@@ -64,7 +56,9 @@ export class AppComponent implements AfterViewInit {
     if (updatedState.score > 0 && updatedState.score % this.service.config.LEVEL_CHANGE_THRESHOLD === 0) {
       updatedState.level = updatedState.level + 1;
       let newInterval = letter.interval - this.service.config.SPEED_ADJUST;
-      newInterval = newInterval < this.service.config.MIN_INTERVAL ? this.service.config.MIN_INTERVAL : newInterval;
+      newInterval = newInterval < this.service.config.MIN_INTERVAL
+        ? this.service.config.MIN_INTERVAL
+        : newInterval;
       this.service.interval$.next(newInterval);
     }
 
@@ -74,27 +68,34 @@ export class AppComponent implements AfterViewInit {
   ngAfterViewInit() {
     this.service.intersectionObserver =
       new IntersectionObserver(this.service.onThresholdCross.bind(this.service), {
-        root: this.gameComponent.lettersField.nativeElement,
+        root: this.lettersField,
         rootMargin: '0px 20px 0px 20px',
         threshold: 0.99,
       });
+  }
+
+  get lettersField() {
+    return this.gameComponent.lettersField.nativeElement;
   }
 
   getLastChild(element: Element) {
     return Array.from(element.children).slice(-1)[0];
   }
 
-  start() {
-    console.log('start', this.service.initialState);
-    this.service.intersectionObserver.disconnect();
-    console.log('disconnected')
+  gameIsNotOver(state: State) {
+    return !state.gameIsOver;
+  }
 
-    this.game$ = this.service._game$
+  start() {
+    this.service.intersectionObserver.disconnect();
+
+    this.game$ = this.service.game$
       .pipe(
         scan(this.updateState.bind(this), this.service.initialState),
-        tap(state => console.log(state)),
-        takeWhile((state) => !state.gameIsOver),
-        finalize(() => this.service.gameOver$.next(false)),
+        takeWhile(this.gameIsNotOver),
+        finalize(() => {
+          this.service.gameOver$.next(false);
+        }),
       );
   }
 }

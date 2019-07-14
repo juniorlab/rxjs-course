@@ -33,8 +33,7 @@ export class GameComponent{
     return {
       value: ':enter',
       params: {
-        timings: `${letter.interval * 2}ms`,
-        // timings: `${letter.interval * 20}ms`,
+        timings: `${letter.interval * 20}ms`,
         x: `${letter.xCoordinate * 5}px`,
       },
     };

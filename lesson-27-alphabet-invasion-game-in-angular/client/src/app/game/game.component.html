@@ -1,7 +1,7 @@
 <main>
   <h1>Alphabet Invasion</h1>
   <h2>Level: <span id="level">{{game?.level}}</span></h2>
-  <h2>Score: <span id="score">{{game?.score}}</span></h2>
+  <h2>Score: <span id="score">{{game?.score | normalizeNegativeNumber}}</span></h2>
   <div class="letters-field-wrapper">
     <div
       #lettersField
@@ -16,5 +16,4 @@
     </div>
   </div>
   <button (click)="start.emit()">Start</button>
-  <pre>{{game | json}}</pre>
 </main>
