@@ -1,0 +1,5 @@
+<app-game
+  *ngIf="game$ | async as game"
+  [game]="game"
+  (start)="start()"
+></app-game>

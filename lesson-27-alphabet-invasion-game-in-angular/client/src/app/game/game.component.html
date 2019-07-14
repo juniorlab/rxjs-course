@@ -1,0 +1,19 @@
+<main>
+  <h1>Alphabet Invasion</h1>
+  <h2>Level: <span id="level">{{game?.level}}</span></h2>
+  <h2>Score: <span id="score">{{game?.score | normalizeNegativeNumber}}</span></h2>
+  <div class="letters-field-wrapper">
+    <div
+      #lettersField
+      id="lettersField"
+      class="letters-field">
+      <div [@letterEnterLeaveTrigger]="getLetterEnterTriggerParams(letter)"
+           *ngFor="let letter of game?.letters; trackBy: lettersTrackBy"
+           [style.transform]="getLetterTransformStyle(letter.xCoordinate)"
+           class="letters-field__row">
+        {{letter.value}}
+      </div>
+    </div>
+  </div>
+  <button (click)="start.emit()">Start</button>
+</main>

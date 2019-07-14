@@ -94,8 +94,6 @@ window.addEventListener('load', () => {
 
   const gameOver$ = new BehaviorSubject(false);
 
-  // const randomLettersSource$ = new Subject();
-
   const randomLetters$ = _randomLettersSource$.pipe(multicast(new Subject()), refCount());
 
   const transform$ = randomLetters$.pipe(
