@@ -11,7 +11,8 @@ export interface Letter {
 }
 
 export interface State {
-  letters: Letter[],
-  score: number,
-  level: number,
+  gameIsOver: boolean;
+  letters: Letter[];
+  score: number;
+  level: number;
 }

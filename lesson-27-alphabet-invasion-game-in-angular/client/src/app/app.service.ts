@@ -1,6 +1,6 @@
 import {EventEmitter, Injectable, Output} from '@angular/core';
 import {BehaviorSubject, combineLatest, fromEvent, interval, Observable, Subject} from 'rxjs';
-import {map, multicast, refCount, scan, startWith, switchMap} from 'rxjs/operators';
+import {map, multicast, refCount, scan, startWith, switchMap, tap} from 'rxjs/operators';
 import {Key, Letter, State} from './app.types';
 
 @Injectable({
@@ -31,14 +31,15 @@ export class AppService {
   };
 
   initialState: State = {
+    gameIsOver: false,
     letters: [this.initialLetter],
-    score: -1,
+    score: 0,
     level: 1,
   };
 
   intersectionObserver: IntersectionObserver;
 
-  interval$: Observable<number> = new BehaviorSubject(this.config.INITIAL_INTERVAL);
+  interval$ = new BehaviorSubject(this.config.INITIAL_INTERVAL);
   keys$ = fromEvent(document, 'keydown')
     .pipe(
       startWith({key: ''} as KeyboardEvent),
@@ -66,7 +67,7 @@ export class AppService {
 
   gameOver$ = new BehaviorSubject(false);
 
-  game$ = combineLatest(
+  _game$ = combineLatest(
     this.randomLetters$.pipe(startWith(this.initialLetter)),
     this.keys$.pipe(startWith(this.initialKey)),
     this.gameOver$,
@@ -78,9 +79,8 @@ export class AppService {
 
   onThresholdCross(entries: IntersectionObserverEntry[]) {
     entries.forEach(entry => {
-      // console.log(entry.intersectionRatio)
+      console.debug('entry.intersectionRatio',entry.intersectionRatio)
       if (entry.intersectionRatio < 1) {
-        console.log(this);
         this.gameOver$.next(true);
         this.intersectionObserver.disconnect();
       }
