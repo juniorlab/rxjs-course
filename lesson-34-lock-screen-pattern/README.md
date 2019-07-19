@@ -1,6 +1,6 @@
-# Alphabet Invasion Game
+# Lock Screen Pattern
 
-Успевай нажимать верные клавиши
+Введите верный пароль по точкам
 
 ## Запуск
 
