@@ -1,0 +1,14 @@
+<main (dragstart)="noop()">
+  <div>
+    <div class="text">ENTER PASSWORD</div>
+    <div class="lock"
+         (dragstart)="noop()">
+      <div *ngFor="let id of lockService.range(9)"
+           class="lock__cell"
+           (dragstart)="noop()"
+           (mouseenter)="mouseEnterEvents$.next(id)"
+           (mousedown)="mouseDownEvents$.next(id)"
+      ></div>
+    </div>
+  </div>
+</main>
