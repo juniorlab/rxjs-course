@@ -1,0 +1,10 @@
+* {
+  margin: 0;
+}
+
+html,
+body {
+  background-color: #001925;
+  height: 100%;
+  width: 100%;
+}
