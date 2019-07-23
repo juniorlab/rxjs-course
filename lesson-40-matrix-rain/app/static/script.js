@@ -141,10 +141,10 @@ window.addEventListener('load', () => {
   async function playInitialAnimation(cellElement, order) {
     cellElement.animate([
       {color: 'transparent'},
-      {color: 'white', offset: 0.3},
+      {color: 'white', offset: 0.2},
       {color: 'green'},
     ], {
-      delay: order * 200,
+      delay: order * 150,
       duration: 500,
     }).onfinish = () => {
       cellElement.classList.add('green');

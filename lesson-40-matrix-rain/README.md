@@ -1,6 +1,4 @@
-# Lock Screen Pattern
-
-Введите верный пароль по точкам
+# Matrix digital rain
 
 ## Запуск
 
