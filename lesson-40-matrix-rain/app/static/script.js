@@ -75,14 +75,14 @@ window.addEventListener('load', () => {
         for (let c = 0; c < numberOfCells; c++) {
           const cell = draft.cells[c];
           if (current.value.interval % cell.interval === 0) {
-            cell.element.textcontent = current.value.data[c].symbol;
+            cell.element.textContent = current.value.data[c].symbol;
           }
         }
       } else {
         for (let c = 0; c < numberOfCells; c++) {
           const cell = draft.cells[c];
           if (current.value.interval % cell.interval === 0) {
-            cell.element.textcontent = current.value.data[c].symbol;
+            cell.element.textContent = current.value.data[c].symbol;
           }
           draft.cells[c].interval = current.value.data[c].interval;
         }
