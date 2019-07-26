@@ -1,0 +1,45 @@
+* {
+    --cell-size: 20px;
+    --symbol-size: 15px;
+    box-sizing: border-box;
+    margin: 0;
+}
+
+html,
+body {
+    background-color: black;
+    /*height: calc(100% + 60px);*/
+    height: 100%;
+    color: red;
+    overflow: hidden;
+    width: 100%;
+}
+
+.green {
+    color: green;
+}
+
+main {
+    display: grid;
+    grid-auto-flow: column
+}
+
+.column {
+    height: 100%;
+    position: relative;
+    width: var(--cell-size);
+}
+
+.stream {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+}
+
+.cell {
+    display: grid;
+    font-size: var(--symbol-size);
+    height: var(--cell-size);
+    place-items: center;
+    width: var(--cell-size);
+}
