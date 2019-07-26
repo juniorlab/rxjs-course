@@ -70,25 +70,25 @@ window.addEventListener('load', () => {
   }
 
   function updateState(state, current) {
-    return produce(state, (draft) => {
-      if (current.timestamp - draft.lastIntervalUpdateTimestamp < 5000) {
-        for (let c = 0; c < numberOfCells; c++) {
-          const cell = draft.cells[c];
-          if (current.value.interval % cell.interval === 0) {
-            cell.element.firstChild.replaceData(0, 1, current.value.data[c].symbol);
-          }
+    const updatedState = {...state};
+    if (current.timestamp - updatedState.lastIntervalUpdateTimestamp < 5000) {
+      for (let c = 0; c < numberOfCells; c++) {
+        const cell = updatedState.cells[c];
+        if (current.value.interval % cell.interval === 0) {
+          cell.element.firstChild.replaceData(0, 1, current.value.data[c].symbol);
         }
-      } else {
-        for (let c = 0; c < numberOfCells; c++) {
-          const cell = draft.cells[c];
-          if (current.value.interval % cell.interval === 0) {
-            cell.element.firstChild.replaceData(0, 1, current.value.data[c].symbol);
-          }
-          draft.cells[c].interval = current.value.data[c].interval;
-        }
-        draft.lastIntervalUpdateTimestamp = current.timestamp;
       }
-    });
+    } else {
+      for (let c = 0; c < numberOfCells; c++) {
+        const cell = updatedState.cells[c];
+        if (current.value.interval % cell.interval === 0) {
+          cell.element.firstChild.replaceData(0, 1, current.value.data[c].symbol);
+        }
+        updatedState.cells[c].interval = current.value.data[c].interval;
+      }
+      updatedState.lastIntervalUpdateTimestamp = current.timestamp;
+    }
+    return updatedState;
   }
 
   interval(16).pipe(
