@@ -75,14 +75,17 @@ window.addEventListener('load', () => {
       for (let c = 0; c < numberOfCells; c++) {
         const cell = updatedState.cells[c];
         if (current.value.interval % cell.interval === 0) {
-          cell.element.firstChild.replaceData(0, 1, current.value.data[c].symbol);
+          // cell.element.firstChild.replaceData(0, 1, current.value.data[c].symbol);
+          requestAnimationFrame(() => cell.element.firstChild.replaceData(0, 1, current.value.data[c].symbol))
         }
       }
     } else {
       for (let c = 0; c < numberOfCells; c++) {
         const cell = updatedState.cells[c];
         if (current.value.interval % cell.interval === 0) {
-          cell.element.firstChild.replaceData(0, 1, current.value.data[c].symbol);
+          // cell.element.firstChild.replaceData(0, 1, current.value.data[c].symbol);
+          requestAnimationFrame(() => cell.element.firstChild.replaceData(0, 1, current.value.data[c].symbol))
+
         }
         updatedState.cells[c].interval = current.value.data[c].interval;
       }
