@@ -52,6 +52,7 @@ window.addEventListener('load', () => {
   for (let i = 0; i < numberOfCells; i++) {
     initialState.cells[i] = {
       element: cellElements[i],
+      text: cellElements[i].firstChild,
       interval: getRandomInterval(),
       isOccupied: false,
     };
@@ -74,16 +75,14 @@ window.addEventListener('load', () => {
       for (let c = 0; c < numberOfCells; c++) {
         const cell = updatedState.cells[c];
         if (current.value.interval % cell.interval === 0) {
-          // cell.element.firstChild.replaceData(0, 1, current.value.data[c].symbol);
-          requestAnimationFrame(() => cell.element.firstChild.replaceData(0, 1, current.value.data[c].symbol))
+          requestAnimationFrame(() => cell.text.replaceData(0, 1, current.value.data[c].symbol))
         }
       }
     } else {
       for (let c = 0; c < numberOfCells; c++) {
         const cell = updatedState.cells[c];
         if (current.value.interval % cell.interval === 0) {
-          // cell.element.firstChild.replaceData(0, 1, current.value.data[c].symbol);
-          requestAnimationFrame(() => cell.element.firstChild.replaceData(0, 1, current.value.data[c].symbol))
+          requestAnimationFrame(() => cell.text.replaceData(0, 1, current.value.data[c].symbol))
 
         }
         updatedState.cells[c].interval = current.value.data[c].interval;
