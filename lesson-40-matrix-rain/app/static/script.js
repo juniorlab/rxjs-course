@@ -1,4 +1,3 @@
-import produce from 'immer';
 import fastdom from 'fastdom';
 import {interval} from 'rxjs';
 import {map, scan, tap, timestamp} from 'rxjs/operators';
@@ -151,7 +150,7 @@ window.addEventListener('load', () => {
       delay: order * 150,
       duration: 500,
     }).onfinish = () => {
-      fastdom.mutate(() => cellElement.classList.add('green'));
+      fastdom.mutate(() => cellElement.style.color = '#00ab00');
       cellElement.animate([
         {color: 'green'},
         {color: 'transparent'},
@@ -159,7 +158,7 @@ window.addEventListener('load', () => {
         delay: order * 200,
         duration: 500,
       }).onfinish = () => {
-        fastdom.mutate(() => cellElement.classList.remove('green'));
+        fastdom.mutate(() => cellElement.style.color = 'transparent');
       };
     };
   }
