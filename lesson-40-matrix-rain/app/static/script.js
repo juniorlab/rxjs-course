@@ -1,4 +1,4 @@
-import produce from 'immer';
+import fastdom from 'fastdom';
 import {interval} from 'rxjs';
 import {map, scan, tap, timestamp} from 'rxjs/operators';
 
@@ -25,6 +25,8 @@ const CELL_SIZE = 20;
 const INTERVAL = 250;
 const MAX_LENGTH = 40;
 const MIN_LENGTH = 15;
+const MIN_SYMBOL_CHANGE_INTERVAL = 16;
+const MAX_SYMBOL_CHANGE_INTERVAL = 500;
 // 10% of the number of columns
 const NEW_DROPS_PER_INTERVAL = 0.1;
 
@@ -42,7 +44,7 @@ window.addEventListener('load', () => {
   cellElements.forEach((element) => rainElement.appendChild(element));
 
   function getRandomInterval() {
-    return Math.floor(randomIndex(500) / 16) * 16;
+    return Math.floor(randomIndex(MAX_SYMBOL_CHANGE_INTERVAL) / MIN_SYMBOL_CHANGE_INTERVAL) * MIN_SYMBOL_CHANGE_INTERVAL;
   }
 
   const initialState = {
@@ -52,6 +54,7 @@ window.addEventListener('load', () => {
   for (let i = 0; i < numberOfCells; i++) {
     initialState.cells[i] = {
       element: cellElements[i],
+      text: cellElements[i].firstChild,
       interval: getRandomInterval(),
       isOccupied: false,
     };
@@ -69,30 +72,31 @@ window.addEventListener('load', () => {
   }
 
   function updateState(state, current) {
-    return produce(state, (draft) => {
-      if (current.timestamp - draft.lastIntervalUpdateTimestamp < 5000) {
-        for (let c = 0; c < numberOfCells; c++) {
-          const cell = draft.cells[c];
-          if (current.value.interval % cell.interval === 0) {
-            cell.element.innerText = current.value.data[c].symbol;
-          }
+    const updatedState = {...state};
+    if (current.timestamp - updatedState.lastIntervalUpdateTimestamp < 5000) {
+      for (let c = 0; c < numberOfCells; c++) {
+        const cell = updatedState.cells[c];
+        if (current.value.interval % cell.interval === 0) {
+          requestAnimationFrame(() => cell.text.replaceData(0, 1, current.value.data[c].symbol))
         }
-      } else {
-        for (let c = 0; c < numberOfCells; c++) {
-          const cell = draft.cells[c];
-          if (current.value.interval % cell.interval === 0) {
-            cell.element.innerText = current.value.data[c].symbol;
-          }
-          draft.cells[c].interval = current.value.data[c].interval;
-        }
-        draft.lastIntervalUpdateTimestamp = current.timestamp;
       }
-    });
+    } else {
+      for (let c = 0; c < numberOfCells; c++) {
+        const cell = updatedState.cells[c];
+        if (current.value.interval % cell.interval === 0) {
+          requestAnimationFrame(() => cell.text.replaceData(0, 1, current.value.data[c].symbol))
+
+        }
+        updatedState.cells[c].interval = current.value.data[c].interval;
+      }
+      updatedState.lastIntervalUpdateTimestamp = current.timestamp;
+    }
+    return updatedState;
   }
 
-  interval(16).pipe(
+  interval(MIN_SYMBOL_CHANGE_INTERVAL).pipe(
     map((i) => ({
-      interval: i * 16,
+      interval: i * MIN_SYMBOL_CHANGE_INTERVAL,
       data: getNewSymbolsAndIntervals(),
     })),
     timestamp(),
@@ -141,13 +145,13 @@ window.addEventListener('load', () => {
   async function playInitialAnimation(cellElement, order) {
     cellElement.animate([
       {color: 'transparent'},
-      {color: 'white', offset: 0.2},
+      {color: '#e8ffe6', offset: 0},
       {color: 'green'},
     ], {
       delay: order * 150,
-      duration: 500,
+      duration: 900,
     }).onfinish = () => {
-      cellElement.classList.add('green');
+      fastdom.mutate(() => cellElement.style.color = '#00ab00');
       cellElement.animate([
         {color: 'green'},
         {color: 'transparent'},
@@ -155,7 +159,7 @@ window.addEventListener('load', () => {
         delay: order * 200,
         duration: 500,
       }).onfinish = () => {
-        cellElement.classList.remove('green');
+        fastdom.mutate(() => cellElement.style.color = 'transparent');
       };
     };
   }
