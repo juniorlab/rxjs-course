@@ -145,11 +145,11 @@ window.addEventListener('load', () => {
   async function playInitialAnimation(cellElement, order) {
     cellElement.animate([
       {color: 'transparent'},
-      {color: 'white', offset: 0.2},
+      {color: '#e8ffe6', offset: 0},
       {color: 'green'},
     ], {
       delay: order * 150,
-      duration: 500,
+      duration: 900,
     }).onfinish = () => {
       fastdom.mutate(() => cellElement.style.color = '#00ab00');
       cellElement.animate([
