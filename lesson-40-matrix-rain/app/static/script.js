@@ -25,6 +25,8 @@ const CELL_SIZE = 20;
 const INTERVAL = 250;
 const MAX_LENGTH = 40;
 const MIN_LENGTH = 15;
+const MIN_SYMBOL_CHANGE_INTERVAL = 16;
+const MAX_SYMBOL_CHANGE_INTERVAL = 500;
 // 10% of the number of columns
 const NEW_DROPS_PER_INTERVAL = 0.1;
 
@@ -42,7 +44,7 @@ window.addEventListener('load', () => {
   cellElements.forEach((element) => rainElement.appendChild(element));
 
   function getRandomInterval() {
-    return Math.floor(randomIndex(500) / 16) * 16;
+    return Math.floor(randomIndex(MAX_SYMBOL_CHANGE_INTERVAL) / MIN_SYMBOL_CHANGE_INTERVAL) * MIN_SYMBOL_CHANGE_INTERVAL;
   }
 
   const initialState = {
@@ -92,9 +94,9 @@ window.addEventListener('load', () => {
     return updatedState;
   }
 
-  interval(16).pipe(
+  interval(MIN_SYMBOL_CHANGE_INTERVAL).pipe(
     map((i) => ({
-      interval: i * 16,
+      interval: i * MIN_SYMBOL_CHANGE_INTERVAL,
       data: getNewSymbolsAndIntervals(),
     })),
     timestamp(),
